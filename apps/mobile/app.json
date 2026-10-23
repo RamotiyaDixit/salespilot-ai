@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "SalesPilot AI",
+    "slug": "salespilot-ai",
+    "scheme": "salespilot",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#f5f7fb"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#c8f5db"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
