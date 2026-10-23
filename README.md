@@ -4,6 +4,19 @@ AI-assisted sales operations prototype: Next.js web dashboard, Express REST API,
 
 > Demo mode: data is synthetic. API run history is currently in-memory and resets on restart. SQL schema is a foundation, not yet wired to API persistence. Mobile alerts are in-app (push delivery is not configured). Do not connect sensitive CRM data before adding authentication, tenant isolation, secure tokens, and audit logs.
 
+## Screenshots
+
+These screenshots are captured from the running applications by the GitHub Actions screenshot workflow (not mockups).
+
+### Web dashboard
+
+![SalesPilot AI web dashboard](docs/screenshots/web-dashboard.png)
+
+### Mobile app (Expo / React Native)
+
+![SalesPilot AI mobile app](docs/screenshots/mobile-app.png)
+
+
 ## Architecture
 
 - **Web:** Next.js, TypeScript, Tailwind CSS, Recharts
