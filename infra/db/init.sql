@@ -1,0 +1,15 @@
+-- SalesPilot AI PostgreSQL schema foundation (PostgreSQL 15+)
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+-- Optional if installed: CREATE EXTENSION IF NOT EXISTS vector;
+CREATE TABLE IF NOT EXISTS crm_contacts(id text PRIMARY KEY,name text NOT NULL,email text,company text,role text,created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS crm_deals(id text PRIMARY KEY,name text NOT NULL,company text NOT NULL,owner text NOT NULL,stage text NOT NULL CHECK(stage IN('Lead','Qualified','Proposal','Negotiation','Won','Lost')),value numeric(14,2) NOT NULL DEFAULT 0,probability numeric(4,3) NOT NULL DEFAULT 0 CHECK(probability>=0 AND probability<=1),created_at timestamptz NOT NULL,close_date timestamptz NOT NULL,last_activity_at timestamptz NOT NULL,contact_id text REFERENCES crm_contacts(id),source text NOT NULL DEFAULT 'demo');
+CREATE INDEX IF NOT EXISTS idx_crm_deals_owner_stage ON crm_deals(owner,stage);
+CREATE INDEX IF NOT EXISTS idx_crm_deals_close_date ON crm_deals(close_date);
+CREATE TABLE IF NOT EXISTS crm_activities(id text PRIMARY KEY,deal_id text REFERENCES crm_deals(id),type text NOT NULL,title text NOT NULL,owner text NOT NULL,occurred_at timestamptz NOT NULL,completed boolean NOT NULL DEFAULT false);
+CREATE TABLE IF NOT EXISTS agent_runs(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),started_at timestamptz NOT NULL,completed_at timestamptz,status text NOT NULL CHECK(status IN('running','completed','failed')),source text NOT NULL,summary text,input_metadata jsonb NOT NULL DEFAULT '{}'::jsonb,output_metadata jsonb NOT NULL DEFAULT '{}'::jsonb,error_message text);
+CREATE TABLE IF NOT EXISTS kpi_snapshots(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),agent_run_id uuid REFERENCES agent_runs(id) ON DELETE CASCADE,captured_at timestamptz NOT NULL DEFAULT now(),period text NOT NULL,manager text NOT NULL DEFAULT 'all',stage text NOT NULL DEFAULT 'all',metrics jsonb NOT NULL);
+CREATE TABLE IF NOT EXISTS sales_alerts(id text PRIMARY KEY,agent_run_id uuid REFERENCES agent_runs(id) ON DELETE SET NULL,severity text NOT NULL CHECK(severity IN('high','medium','low')),title text NOT NULL,description text NOT NULL,deal_id text REFERENCES crm_deals(id),created_at timestamptz NOT NULL DEFAULT now(),acknowledged_at timestamptz,acknowledged_by text);
+CREATE INDEX IF NOT EXISTS idx_sales_alerts_created ON sales_alerts(created_at DESC);
+CREATE TABLE IF NOT EXISTS knowledge_documents(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),title text NOT NULL,source_uri text,document_type text NOT NULL,metadata jsonb NOT NULL DEFAULT '{}'::jsonb,created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS knowledge_chunks(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),document_id uuid NOT NULL REFERENCES knowledge_documents(id) ON DELETE CASCADE,chunk_index integer NOT NULL,content text NOT NULL,metadata jsonb NOT NULL DEFAULT '{}'::jsonb,UNIQUE(document_id,chunk_index));
+-- When pgvector is enabled, add e.g. embedding vector(1536) and a matching ANN index.
