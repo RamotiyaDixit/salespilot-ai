@@ -1,0 +1,21 @@
+{
+  "name": "salespilot-ai",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/api",
+    "apps/web",
+    "apps/mobile"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run dev --workspace @salespilot/api",
+    "dev:web": "npm run dev --workspace @salespilot/web",
+    "dev:mobile": "npm run start --workspace @salespilot/mobile",
+    "typecheck": "npm run typecheck --workspace @salespilot/api && npm run typecheck --workspace @salespilot/web && npm run typecheck --workspace @salespilot/mobile",
+    "build:web": "npm run build --workspace @salespilot/web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
