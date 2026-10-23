@@ -16,6 +16,7 @@
     "build:web": "npm run build --workspace @salespilot/web"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "playwright": "^1.49.1"
   }
 }
